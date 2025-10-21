@@ -39,9 +39,10 @@ jobs:
         run: |
           docker pull docker.io/cyklonehateka1/training_repo:mario-game-${{ env.VERSION }}
           docker save -o supermariolatestdockerimage.tar docker.io/cyklonehateka1/training_repo:mario-game-${{ env.VERSION }}
+          ls -lh
       - name: Run Trivy vulnerability scanner in tarball mode
         uses: aquasecurity/trivy-action@master
         with:
-          input: /github/workspace/supermariolatestdockerimage.tar
+          input: supermariolatestdockerimage.tar
           exit-code: '0'
           severity: 'CRITICAL,HIGH'
