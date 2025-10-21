@@ -1,4 +1,4 @@
-name: "Build and push Super Mario Docker image with dynamic tag to Docker Hub"
+name: "Run Container Scan on Super Mario Docker Image with Quality Gate"
  
 on:
   push:
@@ -24,9 +24,9 @@ jobs:
         run: |
           docker build -t docker.io/cyklonehateka1/training_repo:mario-game-${{ env.VERSION }} .
           docker push docker.io/cyklonehateka1/training_repo:mario-game-${{ env.VERSION }}
-  
+ 
   run_container_image_scan_on_supermario_docker_image:
-    runs-on: ubuntu-latest	
+    runs-on: ubuntu-latest  
  
     steps:
       - name: Checkout Repository
@@ -37,12 +37,14 @@ jobs:
         
       - name: Get Docker Image from Docker Hub
         run: |
-          docker pull docker.io/cyklonehateka1/training_repo:mario-game-${{ env.VERSION }}
-          docker save -o supermariolatestdockerimage.tar docker.io/cyklonehateka1/training_repo:mario-game-${{ env.VERSION }}
-          ls -lh
+          docker pull docker.io/cyklonehateka1/training_repo:mario-game-1.0.0
+          docker save -o supermariolatestdockerimage.tar docker.io/cyklonehateka1/training_repo:mario-game-1.0.0
+          ls -lh  # 👈 sanity check that file exists
+ 
+     
       - name: Run Trivy vulnerability scanner in tarball mode
         uses: aquasecurity/trivy-action@master
         with:
-          input: supermariolatestdockerimage.tar
-          exit-code: '0'
+          input:  supermariolatestdockerimage.tar
+          exit-code: '1'
           severity: 'CRITICAL,HIGH'
